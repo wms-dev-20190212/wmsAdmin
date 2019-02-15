@@ -109,7 +109,6 @@
 import mixin from '@/mixins/list' // 引入
 import {
   getdepartList,
-  saveOrgAuthRela,
   addDepart,
   editDepart,
   delDepart
@@ -200,6 +199,7 @@ export default {
         success
       } = await getdepartList(this.listQuery)
       if (success) {
+        debugger
         this.list = data.list
         // this.total = data.total
         this.loading = false
