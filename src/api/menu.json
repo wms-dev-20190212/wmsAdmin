@@ -309,5 +309,54 @@
       "leaf": true,
       "label": "组织管理"
     }]
+  },{
+    "id": "3b23d3e9-9465-11e8-a2d4-00163e0280a5",
+    "createTime": 1532966400000,
+    "creater": "auto",
+    "updateTime": 1536508800000,
+    "status": 1,
+    "menuUrl": "PDManage",
+    "isMenu": "1",
+    "menuLevel": 1,
+    "icon": "xitong",
+    "method": "put",
+    "sortOrder": 3,
+    "remark": "",
+    "parentId": "",
+    "leaf": false,
+    "label": "物流管理",
+    "children": [{
+      "id": "f5eb265e-8fd2-11e8-a2d4-00163e0280a5",
+      "createTime": 1532448000000,
+      "creater": "auto",
+      "updateTime": 1536508800000,
+      "status": 1,
+      "menuUrl": "warehouseInorout",
+      "isMenu": "1",
+      "menuLevel": 2,
+      "icon": "iconset0203",
+      "method": "put",
+      "sortOrder": 25,
+      "remark": "我是2级菜单",
+      "parentId": "a033eb26-8fd2-11e8-a2d4-00163e0280a5",
+      "leaf": true,
+      "label": "货物出入管理（自发货）"
+    },{
+      "id": "f5eb265e-8fd2-11e8-a2d4-00163e0280a5",
+      "createTime": 1532448000000,
+      "creater": "auto",
+      "updateTime": 1536508800000,
+      "status": 1,
+      "menuUrl": "warehouse",
+      "isMenu": "1",
+      "menuLevel": 2,
+      "icon": "iconset0203",
+      "method": "put",
+      "sortOrder": 25,
+      "remark": "我是2级菜单",
+      "parentId": "a033eb26-8fd2-11e8-a2d4-00163e0280a5",
+      "leaf": true,
+      "label": "仓库管理"
+    }]
   }]
 }

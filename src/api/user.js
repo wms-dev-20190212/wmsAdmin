@@ -6,6 +6,12 @@ export function getUserList(data) {
     method: 'get'
   });
 }
+export function getUserAllList(data) {
+  return request({
+    url: 'api/user/userAllList',
+    method: 'get'
+  });
+}
 
 export function addUser(data) {
   return request({
