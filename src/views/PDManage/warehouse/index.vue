@@ -2,11 +2,11 @@
 <div class="tab-container">
   <div class="tools">
     <div class="paddingb textl paddingr">
-      <el-input v-model="input.objName" placeholder="可根据工程名称 查询" style="width: 20%;"></el-input>
+      <el-input v-model="input.objName" placeholder="可根据仓库名称 查询" style="width: 20%;"></el-input>
 
       <el-button style="margin-left:20px" @click="loadPageList" type="primary" icon="el-icon-search"></el-button>
 
-      <el-button style="margin-left: 10px;" @click="handleCreate" type="primary" icon="el-icon-edit">添加派单</el-button>
+      <el-button style="margin-left: 10px;" @click="handleCreate" type="primary" icon="el-icon-edit">添加仓库</el-button>
 
     </div>
   </div>
@@ -36,25 +36,25 @@
     </el-table-column>
     <el-table-column align="center" label="联系方式">
       <template slot-scope="scope">
-        <span >
+        <span>
           {{ scope.row.phone}}</span>
       </template>
     </el-table-column>
     <el-table-column align="center" label="地址">
       <template slot-scope="scope">
-        <span >
+        <span>
           {{ scope.row.address}}</span>
       </template>
     </el-table-column>
     <el-table-column align="center" label="负责人">
       <template slot-scope="scope">
-        <span >
-          {{ scope.row.fuzeren}}</span>
+        <span>
+          {{ scope.row.userName}}</span>
       </template>
     </el-table-column>
     <el-table-column align="center" label="备注">
       <template slot-scope="scope">
-        <span >
+        <span>
           {{ scope.row.remark}}</span>
       </template>
     </el-table-column>
@@ -90,7 +90,7 @@
           <el-input v-model="obj.address" placeholder="请输入地址" style="width:80%"></el-input>
         </el-form-item>
         <el-form-item label="负责人">
-          <el-select v-model="obj.userName" style="width:150px" placeholder="请选择">
+          <el-select v-model="obj.fuzeren" style="width:150px" placeholder="请选择">
             <el-option v-for="x in userData" :label=x.userName :key=x.id :value=x.id>
             </el-option>
           </el-select>
@@ -116,7 +116,6 @@
 </template>
 
 <script>
-import qrPhoto from '@/assets/logo/qr.png'
 import mixin from '@/mixins/list' // 引入
 import {
   getwarehouseList,
@@ -134,53 +133,47 @@ export default {
   mixins: [mixin], // 使用mixins
   data() {
     return {
-      qrPhoto,
-      tableName: '',
-      dialogFormTable: false, //控制弹出层
       input: {
         objName: '',
-        userType: '',
-        status: '',
       },
       obj: {
-        productName: '',
-        production: '',
-        productType: '',
-        productionDes: '',
-        groupId: [],
-        operator: '',
-        operatorTime: '',
+        name: '',
+        phone: '',
+        address: '',
+        fuzeren: '',
+        remark: '',
       },
-      userData :[]
+      userData: []
     }
   },
   created() {
 
   },
   async mounted() {
-    this.loading = false
     this.loadPageList()
     this.userType = window.sessionStorage.getItem('userType')
   },
   computed: {},
   methods: {
-
     async loadPageList() {
       if (this.input) {
         this.listQuery.objName = this.input.objName
-        this.listQuery.userType = this.input.userType
-        this.listQuery.status = this.input.status
       } else {
         this.listQuery.objName = ''
       }
       let {
         data,
-        success
+        success,
+        message
       } = await getwarehouseList(this.listQuery)
       if (success) {
         this.list = data.list
         // this.total = data.total
         this.loading = false
+        this.$message({
+          message: message,
+          type: 'success'
+        });
       }
     },
     async handleCreate() {
@@ -189,13 +182,11 @@ export default {
       this.dialogadd = true
       this.dialogsave = false
       this.obj = {
-        productName: '',
-        production: '',
-        productType: '',
-        productionDes: "",
-        groupId: [],
-        operator: '',
-        operatorTime: '',
+        name: '',
+        phone: '',
+        address: '',
+        fuzeren: '',
+        remark: '',
       }
       this.loadUserList()
     },
@@ -203,10 +194,12 @@ export default {
     async loadUserList() {
       let {
         data,
-        success
+        success,
+        message
       } = await getUserAllList()
       if (success) {
         this.userData = data.list
+
       }
     },
     async addCreate(obj) {
@@ -214,31 +207,36 @@ export default {
 
       this.list.push(this.obj)
       // if (!this.validata.validaManageUser(obj)) return
-      let data = await addWarehouse(obj)
-      if (data.code === 200) {
+      let {
+        data,
+        success,
+        message
+      } = await addWarehouse(obj)
+      if (success) {
         this.loadPageList()
         this.dialogFormVisible = false
-      } else {
-        this.$message({
-          message: data.message,
-          type: 'success'
-        });
       }
+      this.$message({
+        message: message,
+        type: 'success'
+      });
     },
 
     async saveCreate(obj) {
       this.dialogFormVisible = false
       // if (!this.validata.validaManageUser(obj)) return
-      let data = await editWarehouse(obj)
-      if (data.code === 200) {
-        this.obj.productionDes = this.obj.newPassword
-        this.dialogFormVisible = false
-      } else {
-        this.$message({
-          message: data.message,
-          type: 'success'
-        });
+      let {
+        data,
+        success,
+        message
+      } = await editWarehouse(obj)
+      if (success) {
+        this.loadPageList()
       }
+      this.$message({
+        message: message,
+        type: 'success'
+      });
     },
 
     async handleEdit(data, type) {
@@ -270,17 +268,7 @@ export default {
         });
       }
     },
-    async handleShow(data, type) {
-      this.obj = data
-      if (data.productType == 1 && type == 1) {
-        this.tableName = 'PHC管桩工序生产记录及检验表(钢筋、模板)'
-      } else if (data.productType == 1 && type == 2) {
-        this.tableName = 'PHC管桩工序生产记录及检验表(砼浇筑、张拉、离心、养护、放松、脱模)'
-      } else {
-        this.tableName = 'PHC管桩钢筋笼制作生产记录及检验表'
-      }
-      this.dialogFormTable = true
-    },
+
 
   }
 }

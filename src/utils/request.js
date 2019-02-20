@@ -49,13 +49,14 @@ service.interceptors.response.use(
     // }else
 
 
-    if (res.code == 200) {
-      Message({
-        message: res.message,
-        type: 'success',
-        duration: 5 * 1000
-      })
-    } else if (res.code !== 200 && res.code !== 401) {
+    // if (res.code == 200) {
+    //   Message({
+    //     message: res.message,
+    //     type: 'success',
+    //     duration: 5 * 1000
+    //   })
+    // } else
+     if (res.code !== 200 && res.code !== 401) {
       Message({
         message: res.message,
         type: 'error',

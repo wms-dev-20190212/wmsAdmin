@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-export function getCompanyList(data) {
+export function getcompanyLists(data) {
   return request({
     url: '/api/companyList?userId='+window.sessionStorage.getItem('userId'),
     method: 'get'

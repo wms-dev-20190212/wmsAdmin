@@ -2,11 +2,11 @@
 <div class="tab-container">
   <div class="tools">
     <div class="paddingb textl paddingr">
-      <el-input v-model="input.objName" placeholder="可根据发货名称 查询" style="width: 20%;"></el-input>
+      <el-input v-model="input.objName" placeholder="可根据单位名称 查询" style="width: 20%;"></el-input>
 
       <el-button style="margin-left:20px" @click="loadPageList" type="primary" icon="el-icon-search"></el-button>
 
-      <el-button style="margin-left: 10px;" @click="handleCreate" type="primary" icon="el-icon-edit">添加发货</el-button>
+      <el-button style="margin-left: 10px;" @click="handleCreate" type="primary" icon="el-icon-edit">添加单位</el-button>
 
     </div>
   </div>
@@ -29,46 +29,39 @@
                     军方</span>
                 </template>
     </-table-column> -->
-    <el-table-column align="center" label="货物管理类型">
+    <el-table-column align="center" label="单位名称">
       <template slot-scope="scope">
-        <span>{{ scope.row.type }}</span>
+        <span>{{ scope.row.name }}</span>
       </template>
     </el-table-column>
-    <el-table-column align="center" label="单位">
-      <template slot-scope="scope">
-        <span >
-          {{ scope.row.company}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column align="center" label="仓库">
-      <template slot-scope="scope">
-        <span >
-          {{ scope.row.warehouse}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column align="center" label="负责人">
-      <template slot-scope="scope">
-        <span >
-          {{ scope.row.userName}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column align="center" label="单位">
-      <template slot-scope="scope">
-        <span >
-          {{ scope.row.company}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column align="center" label="备注">
-      <template slot-scope="scope">
-        <span >
-          {{ scope.row.remark}}</span>
-      </template>
-    </el-table-column>
-
-    <el-table-column align="center" label="操作时间">
+    <el-table-column align="center" label="单位类型">
       <template slot-scope="scope">
         <span>
-          {{ scope.row.date}}</span>
+          {{ scope.row.type}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column align="center" label="联系方式">
+      <template slot-scope="scope">
+        <span>
+          {{ scope.row.phone}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column align="center" label="邮箱地址">
+      <template slot-scope="scope">
+        <span>
+          {{ scope.row.email}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column align="center" label="开户银行">
+      <template slot-scope="scope">
+        <span>
+          {{ scope.row.bank}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column align="center" label="银行账号">
+      <template slot-scope="scope">
+        <span>
+          {{ scope.row.bankaccount}}</span>
       </template>
     </el-table-column>
 
@@ -93,26 +86,28 @@
 
       <el-row :gutter="24">
 
-        <el-form-item label="仓库">
-          <el-input v-model="obj.warehouse" placeholder="请输入仓库" style="width:80%"></el-input>
+        <el-form-item label="单位名称">
+          <el-input v-model="obj.name" placeholder="请输入单位名称" style="width:80%"></el-input>
         </el-form-item>
-        <el-form-item label="单位">
-          <el-input v-model="obj.company" placeholder="请输入单位" style="width:80%"></el-input>
-        </el-form-item>
-
-        <el-form-item label="货物管理类型">
+        <el-form-item label="单位类型">
           <el-select v-model="obj.type" style="width:150px" placeholder="请选择">
-            <el-option label="出库" :key=1 :value=1>
+            <el-option  :label='1' :key='1' :value='1'>
             </el-option>
-            <el-option label="入库" :key=2 :value=2>
-            </el-option>
+              <el-option  :label='2' :key='2' :value='2'>
+              </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="负责人">
-          <el-input v-model="obj.userName" placeholder="请输入负责人" style="width:80%"></el-input>
+        <el-form-item label="联系方式">
+          <el-input v-model="obj.phone" placeholder="请输入联系方式" style="width:80%"></el-input>
         </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="obj.remark" placeholder="请输入备注" style="width:80%"></el-input>
+        <el-form-item label="邮箱地址">
+          <el-input v-model="obj.email" placeholder="请输入邮箱地址" style="width:80%"></el-input>
+        </el-form-item>
+        <el-form-item label="开户银行">
+          <el-input v-model="obj.bank" placeholder="请输入开户银行" style="width:80%"></el-input>
+        </el-form-item>
+        <el-form-item label="银行账号">
+          <el-input v-model="obj.bankaccount" placeholder="请输入银行账号" style="width:80%"></el-input>
         </el-form-item>
 
       </el-row>
@@ -132,45 +127,42 @@
 </template>
 
 <script>
-import qrPhoto from '@/assets/logo/qr.png'
 import mixin from '@/mixins/list' // 引入
 import {
-  getwarehouseInoroutList,
-  addWarehouseInorout,
-  editWarehouseInorout,
-  delWarehouseInorout
-} from '@/api/warehouseInorout'
+  getcompanyLists,
+  addCompany,
+  editCompany,
+  delCompany
+} from '@/api/company'
 
-
+import {
+  getwarehouseList,
+  addWarehouse,
+  editWarehouse,
+  delWarehouse
+} from '@/api/warehouse'
 
 export default {
   mixins: [mixin], // 使用mixins
   data() {
     return {
-      qrPhoto,
-      tableName: '',
-      dialogFormTable: false, //控制弹出层
       input: {
         objName: '',
-        userType: '',
-        status: '',
       },
       obj: {
-        productName: '',
-        production: '',
-        productType: '',
-        productionDes: '',
-        groupId: [],
-        operator: '',
-        operatorTime: '',
-      },
+        name: '',
+        type: '',
+        phone: '',
+        email: '',
+        bank: '',
+        bankaccount: '',
+      }
     }
   },
   created() {
 
   },
   async mounted() {
-    this.loading = false
     this.loadPageList()
     this.userType = window.sessionStorage.getItem('userType')
   },
@@ -179,69 +171,75 @@ export default {
     async loadPageList() {
       if (this.input) {
         this.listQuery.objName = this.input.objName
-        this.listQuery.userType = this.input.userType
-        this.listQuery.status = this.input.status
       } else {
         this.listQuery.objName = ''
       }
+
       let {
         data,
-        success
-      } = await getwarehouseInoroutList(this.listQuery)
+        success,
+        message
+      } = await getcompanyLists(this.listQuery)
       if (success) {
         this.list = data.list
         // this.total = data.total
         this.loading = false
+        this.$message({
+          message: message,
+          type: 'success'
+        });
       }
     },
-
     async handleCreate() {
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.dialogadd = true
       this.dialogsave = false
       this.obj = {
-        productName: '',
-        production: '',
-        productType: '',
-        productionDes: "",
-        groupId: [],
-        operator: '',
-        operatorTime: '',
+        name: '',
+        type: '',
+        phone: '',
+        email: '',
+        bank: '',
+        bankaccount: '',
       }
     },
-
 
     async addCreate(obj) {
       this.dialogFormVisible = false
 
       this.list.push(this.obj)
       // if (!this.validata.validaManageUser(obj)) return
-      let data = await addWarehouseInorout(obj)
-      if (data.code === 200) {
+      let {
+        data,
+        success,
+        message
+      } = await addCompany(obj)
+      if (success) {
         this.loadPageList()
         this.dialogFormVisible = false
-      } else {
-        this.$message({
-          message: data.message,
-          type: 'success'
-        });
       }
+      this.$message({
+        message: message,
+        type: 'success'
+      });
     },
 
     async saveCreate(obj) {
       this.dialogFormVisible = false
       // if (!this.validata.validaManageUser(obj)) return
-      // let data = await editWarehouseInorout(obj)
-      // if (data.code === 200) {
-      //   this.obj.productionDes = this.obj.newPassword
-      //   this.dialogFormVisible = false
-      // } else {
-      //   this.$message({
-      //     message: data.message,
-      //     type: 'success'
-      //   });
-      // }
+      let {
+        data,
+        success,
+        message
+      } = await editCompany(obj)
+      if (success) {
+        this.loadPageList()
+      }
+      this.$message({
+        message: message,
+        type: 'success'
+      });
     },
 
     async handleEdit(data, type) {
@@ -257,7 +255,7 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(async () => {
-          // let del = await delWarehouseInorout(data.id)
+          let del = await delCompany(data.id)
           this.list.splice(this.list.indexOf(data), 1)
           this.$message({
             type: 'success',
@@ -272,17 +270,7 @@ export default {
         });
       }
     },
-    async handleShow(data, type) {
-      this.obj = data
-      if (data.productType == 1 && type == 1) {
-        this.tableName = 'PHC管桩工序生产记录及检验表(钢筋、模板)'
-      } else if (data.productType == 1 && type == 2) {
-        this.tableName = 'PHC管桩工序生产记录及检验表(砼浇筑、张拉、离心、养护、放松、脱模)'
-      } else {
-        this.tableName = 'PHC管桩钢筋笼制作生产记录及检验表'
-      }
-      this.dialogFormTable = true
-    },
+
 
   }
 }

@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-export function getInoroutTypeList(data) {
+export function getInoroutTypeLists(data) {
   return request({
     url: '/api/inoroutTypeList?userId='+window.sessionStorage.getItem('userId'),
     method: 'get'

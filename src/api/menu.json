@@ -340,7 +340,7 @@
       "remark": "我是2级菜单",
       "parentId": "a033eb26-8fd2-11e8-a2d4-00163e0280a5",
       "leaf": true,
-      "label": "货物出入管理（自发货）"
+      "label": "自发货管理"
     },{
       "id": "f5eb265e-8fd2-11e8-a2d4-00163e0280a5",
       "createTime": 1532448000000,
@@ -357,6 +357,86 @@
       "parentId": "a033eb26-8fd2-11e8-a2d4-00163e0280a5",
       "leaf": true,
       "label": "仓库管理"
+    },{
+      "id": "f5eb265e-8fd2-11e8-a2d4-00163e0280a5",
+      "createTime": 1532448000000,
+      "creater": "auto",
+      "updateTime": 1536508800000,
+      "status": 1,
+      "menuUrl": "company",
+      "isMenu": "1",
+      "menuLevel": 2,
+      "icon": "iconset0203",
+      "method": "put",
+      "sortOrder": 25,
+      "remark": "我是2级菜单",
+      "parentId": "a033eb26-8fd2-11e8-a2d4-00163e0280a5",
+      "leaf": true,
+      "label": "单位管理"
+    },{
+      "id": "f5eb265e-8fd2-11e8-a2d4-00163e0280a5",
+      "createTime": 1532448000000,
+      "creater": "auto",
+      "updateTime": 1536508800000,
+      "status": 1,
+      "menuUrl": "inoroutType",
+      "isMenu": "1",
+      "menuLevel": 2,
+      "icon": "iconset0203",
+      "method": "put",
+      "sortOrder": 25,
+      "remark": "我是2级菜单",
+      "parentId": "a033eb26-8fd2-11e8-a2d4-00163e0280a5",
+      "leaf": true,
+      "label": "出入库类型"
+    },{
+      "id": "f5eb265e-8fd2-11e8-a2d4-00163e0280a5",
+      "createTime": 1532448000000,
+      "creater": "auto",
+      "updateTime": 1536508800000,
+      "status": 1,
+      "menuUrl": "goods",
+      "isMenu": "1",
+      "menuLevel": 2,
+      "icon": "iconset0203",
+      "method": "put",
+      "sortOrder": 25,
+      "remark": "我是2级菜单",
+      "parentId": "a033eb26-8fd2-11e8-a2d4-00163e0280a5",
+      "leaf": true,
+      "label": "货物管理"
+    },{
+      "id": "f5eb265e-8fd2-11e8-a2d4-00163e0280a5",
+      "createTime": 1532448000000,
+      "creater": "auto",
+      "updateTime": 1536508800000,
+      "status": 1,
+      "menuUrl": "goodsType",
+      "isMenu": "1",
+      "menuLevel": 2,
+      "icon": "iconset0203",
+      "method": "put",
+      "sortOrder": 25,
+      "remark": "我是2级菜单",
+      "parentId": "a033eb26-8fd2-11e8-a2d4-00163e0280a5",
+      "leaf": true,
+      "label": "货物类型"
+    },{
+      "id": "f5eb265e-8fd2-11e8-a2d4-00163e0280a5",
+      "createTime": 1532448000000,
+      "creater": "auto",
+      "updateTime": 1536508800000,
+      "status": 1,
+      "menuUrl": "inoroutRecord",
+      "isMenu": "1",
+      "menuLevel": 2,
+      "icon": "iconset0203",
+      "method": "put",
+      "sortOrder": 25,
+      "remark": "我是2级菜单",
+      "parentId": "a033eb26-8fd2-11e8-a2d4-00163e0280a5",
+      "leaf": true,
+      "label": "出入库记录"
     }]
   }]
 }
