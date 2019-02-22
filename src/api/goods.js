@@ -32,3 +32,10 @@ export function delGoods(id) {
 
   });
 }
+export function uploadFile(data) {//封面
+  return request({
+    url: 'api/file/upload',
+    method: 'post',
+    data
+  });
+}

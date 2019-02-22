@@ -2,7 +2,7 @@
 <div class="tab-container">
   <div class="tools">
     <div class="paddingb textl paddingr">
-      <el-input v-model="input.objName" placeholder="可根据货物名称 查询" style="width: 20%;"></el-input>
+      <el-input v-model="input.objName" placeholder="可根据货品名称 查询" style="width: 20%;"></el-input>
 
       <el-button style="margin-left:20px" @click="loadPageList" type="primary" icon="el-icon-search"></el-button>
 
@@ -29,36 +29,74 @@
                     军方</span>
                 </template>
     </-table-column> -->
-    <el-table-column align="center" label="仓库名称">
+    <el-table-column align="center" label="货品图片">
+      <template slot-scope="scope">
+        <span>{{ scope.row.pic }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column align="center" label="货品名称">
       <template slot-scope="scope">
         <span>{{ scope.row.name }}</span>
       </template>
     </el-table-column>
-    <el-table-column align="center" label="联系方式">
+    <el-table-column align="center" label="分类">
       <template slot-scope="scope">
         <span>
           {{ scope.row.phone}}</span>
       </template>
     </el-table-column>
-    <el-table-column align="center" label="地址">
+    <el-table-column align="center" label="计量单位">
       <template slot-scope="scope">
         <span>
-          {{ scope.row.address}}</span>
+          {{ scope.row.unit}}</span>
       </template>
     </el-table-column>
-    <el-table-column align="center" label="负责人">
+    <el-table-column align="center" label="编号">
       <template slot-scope="scope">
         <span>
-          {{ scope.row.userName}}</span>
+          {{ scope.row.encode}}</span>
       </template>
     </el-table-column>
-    <el-table-column align="center" label="备注">
+    <el-table-column align="center" label="货品条码">
       <template slot-scope="scope">
         <span>
-          {{ scope.row.remark}}</span>
+          {{ scope.row.barcode}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column align="center" label="规格型号">
+      <template slot-scope="scope">
+        <span>
+          {{ scope.row.size}}</span>
       </template>
     </el-table-column>
 
+    <el-table-column align="center" label="库存上限">
+      <template slot-scope="scope">
+        <span>
+          {{ scope.row.upperlimit}}</span>
+      </template>
+    </el-table-column>
+
+    <el-table-column align="center" label="库存下限">
+      <template slot-scope="scope">
+        <span>
+          {{ scope.row.lowerlimit}}</span>
+      </template>
+    </el-table-column>
+
+    <el-table-column align="center" label="入库参考价">
+      <template slot-scope="scope">
+        <span>
+          {{ scope.row.inprice}}</span>
+      </template>
+    </el-table-column>
+
+    <el-table-column align="center" label="出库参考价">
+      <template slot-scope="scope">
+        <span>
+          {{ scope.row.inprice}}</span>
+      </template>
+    </el-table-column>
 
     <el-table-column align="center" label="操作">
       <template slot-scope="scope">
@@ -74,16 +112,23 @@
   </div>
 
 
-  <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="30%" top='5%'>
+  <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="60%" top='5%'>
 
     <el-form class="" label-width="20%" style="text-align:left">
 
       <el-row :gutter="24">
 
-        <el-form-item label="仓库">
-          <el-input v-model="obj.name" placeholder="请输入仓库" style="width:80%"></el-input>
+
+        <el-form-item label="货品图片">
+          <el-upload class="avatar-uploader" accept=".jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF" ref="my-upload" :before-upload="beforeUploadImg" :http-request="uploadSectionFile" :show-file-list="false" >
+            <img v-if="obj.url" :src="obj.thumbUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
         </el-form-item>
-        <el-form-item label="联系方式">
+        <el-form-item label="货品名称">
+          <el-input v-model="obj.name" placeholder="请输入货品名称" style="width:80%"></el-input>
+        </el-form-item>
+        <el-form-item label="分类">
           <el-input v-model="obj.phone" placeholder="请输入联系方式" style="width:80%"></el-input>
         </el-form-item>
         <el-form-item label="地址">
@@ -95,8 +140,12 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="obj.remark" placeholder="请输入备注" style="width:80%"></el-input>
+
+        <el-form-item label="货品描述">
+          <div class="" style="width:80%">
+            <editor v-model="obj.content"  :init="editorInit"></editor>
+
+          </div>
         </el-form-item>
 
       </el-row>
@@ -121,8 +170,9 @@ import {
   getGoodsList,
   addGoods,
   editGoods,
-  delGoods
-} from '@/api/warehouse'
+  delGoods,
+  uploadFile
+} from '@/api/goods'
 import {
   getUserAllList,
 } from '@/api/user'
@@ -131,6 +181,10 @@ import {
 
 export default {
   mixins: [mixin], // 使用mixins
+  components: {
+    // Tinymce
+    'editor': () => import('@tinymce/tinymce-vue')
+  },
   data() {
     return {
       input: {
@@ -267,6 +321,40 @@ export default {
           });
         });
       }
+    },
+    beforeUploadImg(file) {
+      const isLt10M = file.size / 1024 / 1024 < 10;
+      if (['image/png', 'image/jpeg', ].indexOf(file.type) == -1) {
+        this.$message.error('请上传正确的图片');
+        return false;
+      }
+      if (!isLt10M) {
+        this.$message.error('上传文件大小不能超过10MB哦!');
+        return false;
+      }
+    },
+    //封面上传
+    async uploadSectionFile(param) { //自定义文件上传
+      this.obj.thumbUrl = []
+      var fileObj = param.file;
+      // 接收上传文件的后台地址
+      // FormData 对象
+      var form = new FormData();
+      // 文件对象
+      form.append("file", fileObj);
+      // 其他参数
+      // form.append("xxx", xxx);
+      let {
+        data,
+        success
+      } = await uploadFile(form)
+      // let obj = {
+      //   name: data.fileName,
+      //   url: this.imgBaseUrl + data.savePath
+      // }
+
+      this.obj.thumbUrl = this.imgBaseUrl + data.savePath + '!108!108'
+      this.obj.url = this.imgBaseUrl + data.savePath + '!1000!1000'
     },
 
 
