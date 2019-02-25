@@ -6,7 +6,6 @@
 
       <el-button style="margin-left:20px" @click="loadPageList" type="primary" icon="el-icon-search"></el-button>
 
-      <el-button style="margin-left: 10px;" @click="handleCreate" type="primary" icon="el-icon-edit">添加单位</el-button>
 
     </div>
   </div>
@@ -29,49 +28,45 @@
                     军方</span>
                 </template>
     </-table-column> -->
-    <el-table-column align="center" label="单位名称">
+    <el-table-column align="center" label="单据编号">
       <template slot-scope="scope">
-        <span>{{ scope.row.name }}</span>
+        <span>{{ scope.row.receipt }}</span>
       </template>
     </el-table-column>
-    <el-table-column align="center" label="单位类型">
+    <el-table-column align="center" label="制单时间">
+      <template slot-scope="scope">
+        <span>{{ scope.row.item }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column align="center" label="业务员">
+      <template slot-scope="scope">
+        <span>{{ scope.row.item }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column align="center" label="交易公司">
+      <template slot-scope="scope">
+        <span>{{ scope.row.item }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column align="center" label="出入库类型">
       <template slot-scope="scope">
         <span>
           {{ scope.row.type}}</span>
       </template>
     </el-table-column>
-    <el-table-column align="center" label="联系方式">
+    <el-table-column align="center" label="货物数量">
       <template slot-scope="scope">
         <span>
-          {{ scope.row.phone}}</span>
+          {{ scope.row.num}}</span>
       </template>
     </el-table-column>
-    <el-table-column align="center" label="邮箱地址">
+    <el-table-column align="center" label="货物总价">
       <template slot-scope="scope">
         <span>
-          {{ scope.row.email}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column align="center" label="开户银行">
-      <template slot-scope="scope">
-        <span>
-          {{ scope.row.bank}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column align="center" label="银行账号">
-      <template slot-scope="scope">
-        <span>
-          {{ scope.row.bankaccount}}</span>
+          {{ scope.row.price}}</span>
       </template>
     </el-table-column>
 
-
-    <el-table-column align="center" label="操作">
-      <template slot-scope="scope">
-        <el-button size="small" @click="handleEdit(scope.row,'edit')" type="" class="el-icon-edit colorblue borderblue"></el-button>
-        <el-button size="small" @click="handleEdit(scope.row,'del')" type="" class="el-icon-delete colorred borderred"></el-button>
-      </template>
-    </el-table-column>
 
   </el-table>
 

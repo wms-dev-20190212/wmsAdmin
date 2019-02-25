@@ -1,12 +1,18 @@
 import request from '@/utils/request'
 
-export function getGoodsList(data) {
+export function getGoodsTypeList(data) {
   return request({
     url: '/api/goodsTypeList?userId='+window.sessionStorage.getItem('userId'),
     method: 'get'
   });
 }
 
+export function getGoodsTypeAllList(data) {
+  return request({
+    url: '/api/goodsTypeAllList?userId='+window.sessionStorage.getItem('userId'),
+    method: 'get'
+  });
+}
 
 export function addGoodsType(data) {
   return request({

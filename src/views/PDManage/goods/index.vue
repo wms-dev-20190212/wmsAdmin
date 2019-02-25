@@ -31,7 +31,7 @@
     </-table-column> -->
     <el-table-column align="center" label="货品图片">
       <template slot-scope="scope">
-        <span>{{ scope.row.pic }}</span>
+        <img :src= scope.row.thumbUrl alt="">
       </template>
     </el-table-column>
     <el-table-column align="center" label="货品名称">
@@ -42,13 +42,7 @@
     <el-table-column align="center" label="分类">
       <template slot-scope="scope">
         <span>
-          {{ scope.row.phone}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column align="center" label="计量单位">
-      <template slot-scope="scope">
-        <span>
-          {{ scope.row.unit}}</span>
+          {{ scope.row.goodsType}}</span>
       </template>
     </el-table-column>
     <el-table-column align="center" label="编号">
@@ -63,10 +57,16 @@
           {{ scope.row.barcode}}</span>
       </template>
     </el-table-column>
-    <el-table-column align="center" label="规格型号">
+    <el-table-column align="center" label="实际库存数量">
       <template slot-scope="scope">
         <span>
           {{ scope.row.size}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column align="center" label="计量单位">
+      <template slot-scope="scope">
+        <span>
+          {{ scope.row.unit}}</span>
       </template>
     </el-table-column>
 
@@ -94,7 +94,7 @@
     <el-table-column align="center" label="出库参考价">
       <template slot-scope="scope">
         <span>
-          {{ scope.row.inprice}}</span>
+          {{ scope.row.outprice}}</span>
       </template>
     </el-table-column>
 
@@ -112,7 +112,7 @@
   </div>
 
 
-  <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="60%" top='5%'>
+  <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="70%" top='5%'>
 
     <el-form class="" label-width="20%" style="text-align:left">
 
@@ -120,31 +120,49 @@
 
 
         <el-form-item label="货品图片">
-          <el-upload class="avatar-uploader" accept=".jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF" ref="my-upload" :before-upload="beforeUploadImg" :http-request="uploadSectionFile" :show-file-list="false" >
-            <img v-if="obj.url" :src="obj.thumbUrl" class="avatar">
+          <el-upload class="avatar-uploader" action="" accept=".jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF" ref="my-upload" :before-upload="beforeUploadImg" :http-request="uploadSectionFile" :show-file-list="false">
+            <img v-if="obj.thumbUrl" :src="obj.thumbUrl" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
         <el-form-item label="货品名称">
-          <el-input v-model="obj.name" placeholder="请输入货品名称" style="width:80%"></el-input>
+          <el-input v-model="obj.name" placeholder="请输入货品名称" style="width:30%"></el-input>
         </el-form-item>
         <el-form-item label="分类">
-          <el-input v-model="obj.phone" placeholder="请输入联系方式" style="width:80%"></el-input>
+            <el-select v-model="obj.maintype" style="width:150px" placeholder="请选择">
+              <el-option v-for="x in goodsTypeData" :label=x.name :key=x.id :value=x.id>
+              </el-option>
+            </el-select>
         </el-form-item>
-        <el-form-item label="地址">
-          <el-input v-model="obj.address" placeholder="请输入地址" style="width:80%"></el-input>
+        <el-form-item label="编号">
+          <el-input v-model="obj.encode" placeholder="请输入编号" style="width:30%"></el-input>
         </el-form-item>
-        <el-form-item label="负责人">
-          <el-select v-model="obj.fuzeren" style="width:150px" placeholder="请选择">
-            <el-option v-for="x in userData" :label=x.userName :key=x.id :value=x.id>
+        <el-form-item label="货品条码">
+          <el-input v-model="obj.barcode" placeholder="请输入货品条码" style="width:30%"></el-input>
+        </el-form-item>
+        <el-form-item label="实际库存数量">
+          <el-input v-model="obj.size" placeholder="请输入规格型号" style="width:30%"></el-input>
+        </el-form-item>
+        <el-form-item label="计量单位">
+          <el-select v-model="obj.unit" style="width:150px" placeholder="请选择">
+            <el-option label='斤' key='0' value='0'>
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="库存范围">
+          <el-input-number v-model="obj.upperlimit" placeholder="请输入库存上限" style="width:15%"></el-input-number>
+          <el-input-number v-model="obj.lowerlimit" placeholder="请输入库存下限" style="width:15%"></el-input-number>
+        </el-form-item>
+        <el-form-item label="入库参考价">
+          <el-input-number v-model="obj.inprice" placeholder="请输入库参考价" style="width:15%"></el-input-number>
+          <el-input-number v-model="obj.outprice" placeholder="请输出库参考价" style="width:15%"></el-input-number>
+        </el-form-item>
+
+
 
         <el-form-item label="货品描述">
           <div class="" style="width:80%">
-            <editor v-model="obj.content"  :init="editorInit"></editor>
-
+            <editor v-model="obj.content" :init="editorInit"></editor>
           </div>
         </el-form-item>
 
@@ -176,6 +194,10 @@ import {
 import {
   getUserAllList,
 } from '@/api/user'
+import {
+  getGoodsTypeAllList,
+} from '@/api/goodsType'
+
 
 
 
@@ -191,13 +213,18 @@ export default {
         objName: '',
       },
       obj: {
+        url: '',
+        thumbUrl: this.imgBaseUrl + `pic/idfront.png!108!108`,
         name: '',
-        phone: '',
-        address: '',
+        goodsType: '',
+        encode: '',
+        barcode: '',
+        size: '',
+        unit: '',
         fuzeren: '',
-        remark: '',
+        content: '',
       },
-      userData: []
+      goodsTypeData: []
     }
   },
   created() {
@@ -221,7 +248,11 @@ export default {
         message
       } = await getGoodsList(this.listQuery)
       if (success) {
-        this.list = data.list
+        let goodsList = data.list
+        for (let x in goodsList){
+          goodsList[x].thumbUrl = this.imgBaseUrl +goodsList[x].thumbUrl
+        }
+        this.list = goodsList
         // this.total = data.total
         this.loading = false
         this.$message({
@@ -230,36 +261,48 @@ export default {
         });
       }
     },
+
+
     async handleCreate() {
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.dialogadd = true
       this.dialogsave = false
       this.obj = {
+        url: '',
+        thumbUrl: this.imgBaseUrl + `pic/idfront.png!108!108`,
         name: '',
-        phone: '',
-        address: '',
+        goodsType: '',
+        encode: '',
+        barcode: '',
+        size: '',
+        unit: '',
         fuzeren: '',
-        remark: '',
+        content: '',
       }
-      this.loadUserList()
+      this.loadGoodsType()
     },
 
-    async loadUserList() {
+    async loadGoodsType() {
       let {
         data,
         success,
         message
-      } = await getUserAllList()
+      } = await getGoodsTypeAllList()
       if (success) {
-        this.userData = data.list
+        this.goodsTypeData = data.list
 
       }
     },
     async addCreate(obj) {
       this.dialogFormVisible = false
-
       this.list.push(this.obj)
+
+      let icons = this.obj.thumbUrl
+
+      if (icons.indexOf('/wmsPic/') > -1) {
+        obj.thumbUrl = icons.substring(icons.indexOf('/wmsPic/') + 1, icons.length)
+      }
       // if (!this.validata.validaManageUser(obj)) return
       let {
         data,
@@ -277,13 +320,18 @@ export default {
     },
 
     async saveCreate(obj) {
-      this.dialogFormVisible = false
+      let _this = Object.assign({}, obj);
       // if (!this.validata.validaManageUser(obj)) return
+      let icons = this.obj.thumbUrl
+      if (icons.indexOf('/wmsPic/') > -1) {
+        _this.thumbUrl = icons.substring(icons.indexOf('/wmsPic/') + 1, icons.length)
+      }
+      this.dialogFormVisible = false
       let {
         data,
         success,
         message
-      } = await editGoods(obj)
+      } = await editGoods(_this)
       if (success) {
         this.loadPageList()
       }
@@ -295,12 +343,14 @@ export default {
 
     async handleEdit(data, type) {
       if (type === 'edit') {
-        this.obj = data
+        this.loadGoodsType()
+        this.obj = this.deepCopy(data)
+        data.thumbUrl.includes('http') ? this.obj.thumbUrl = data.thumbUrl : this.obj.thumbUrl = this.imgBaseUrl + data.thumbUrl
+
         this.dialogStatus = 'update'
         this.dialogsave = true
         this.dialogadd = false
         this.dialogFormVisible = true
-        this.loadUserList()
       } else if (type === 'del') {
         this.$confirm('此操作将删除该记录, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -335,7 +385,6 @@ export default {
     },
     //封面上传
     async uploadSectionFile(param) { //自定义文件上传
-      this.obj.thumbUrl = []
       var fileObj = param.file;
       // 接收上传文件的后台地址
       // FormData 对象
@@ -354,7 +403,9 @@ export default {
       // }
 
       this.obj.thumbUrl = this.imgBaseUrl + data.savePath + '!108!108'
+
       this.obj.url = this.imgBaseUrl + data.savePath + '!1000!1000'
+
     },
 
 
@@ -364,4 +415,32 @@ export default {
 
 <style lang="scss">
 @import '../../../styles/index.scss'; // 全局自定义的css样式
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+}
+.avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 110px;
+    height: 110px;
+    line-height: 110px;
+    text-align: center;
+}
+.avatar {
+    width: 110px;
+    height: 110px;
+    display: block;
+}
+.el-input-number__decrease, .el-input-number__increase{
+  height:30px;
+  line-height: 30px;
+  margin: 3px 0;
+}
 </style>

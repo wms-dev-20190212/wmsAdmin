@@ -2,11 +2,11 @@
 <div class="tab-container">
   <div class="tools">
     <div class="paddingb textl paddingr">
-      <el-input v-model="input.objName" placeholder="可根据单位名称 查询" style="width: 20%;"></el-input>
+      <el-input v-model="input.objName" placeholder="可根据货品类型名称 查询" style="width: 20%;"></el-input>
 
       <el-button style="margin-left:20px" @click="loadPageList" type="primary" icon="el-icon-search"></el-button>
 
-      <el-button style="margin-left: 10px;" @click="handleCreate" type="primary" icon="el-icon-edit">添加单位</el-button>
+      <el-button style="margin-left: 10px;" @click="handleCreate" type="primary" icon="el-icon-edit">添加货品类型</el-button>
 
     </div>
   </div>
@@ -29,39 +29,9 @@
                     军方</span>
                 </template>
     </-table-column> -->
-    <el-table-column align="center" label="单位名称">
+    <el-table-column align="center" label="货品类型名称">
       <template slot-scope="scope">
         <span>{{ scope.row.name }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column align="center" label="单位类型">
-      <template slot-scope="scope">
-        <span>
-          {{ scope.row.type}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column align="center" label="联系方式">
-      <template slot-scope="scope">
-        <span>
-          {{ scope.row.phone}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column align="center" label="邮箱地址">
-      <template slot-scope="scope">
-        <span>
-          {{ scope.row.email}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column align="center" label="开户银行">
-      <template slot-scope="scope">
-        <span>
-          {{ scope.row.bank}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column align="center" label="银行账号">
-      <template slot-scope="scope">
-        <span>
-          {{ scope.row.bankaccount}}</span>
       </template>
     </el-table-column>
 
@@ -86,28 +56,8 @@
 
       <el-row :gutter="24">
 
-        <el-form-item label="单位名称">
-          <el-input v-model="obj.name" placeholder="请输入单位名称" style="width:80%"></el-input>
-        </el-form-item>
-        <el-form-item label="单位类型">
-          <el-select v-model="obj.type" style="width:150px" placeholder="请选择">
-            <el-option  :label='1' :key='1' :value='1'>
-            </el-option>
-              <el-option  :label='2' :key='2' :value='2'>
-              </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="联系方式">
-          <el-input v-model="obj.phone" placeholder="请输入联系方式" style="width:80%"></el-input>
-        </el-form-item>
-        <el-form-item label="邮箱地址">
-          <el-input v-model="obj.email" placeholder="请输入邮箱地址" style="width:80%"></el-input>
-        </el-form-item>
-        <el-form-item label="开户银行">
-          <el-input v-model="obj.bank" placeholder="请输入开户银行" style="width:80%"></el-input>
-        </el-form-item>
-        <el-form-item label="银行账号">
-          <el-input v-model="obj.bankaccount" placeholder="请输入银行账号" style="width:80%"></el-input>
+        <el-form-item label="货品类型名称">
+          <el-input v-model="obj.name" placeholder="请输入货品类型名称" style="width:80%"></el-input>
         </el-form-item>
 
       </el-row>
@@ -129,11 +79,11 @@
 <script>
 import mixin from '@/mixins/list' // 引入
 import {
-  getcompanyLists,
-  addCompany,
-  editCompany,
-  delCompany
-} from '@/api/company'
+  getGoodsTypeList,
+  addGoodsType,
+  editGoodsType,
+  delGoodsType
+} from '@/api/goodsType'
 
 
 export default {
@@ -145,11 +95,6 @@ export default {
       },
       obj: {
         name: '',
-        type: '',
-        phone: '',
-        email: '',
-        bank: '',
-        bankaccount: '',
       }
     }
   },
@@ -173,7 +118,7 @@ export default {
         data,
         success,
         message
-      } = await getcompanyLists(this.listQuery)
+      } = await getGoodsTypeList(this.listQuery)
       if (success) {
         this.list = data.list
         // this.total = data.total
@@ -191,11 +136,6 @@ export default {
       this.dialogsave = false
       this.obj = {
         name: '',
-        type: '',
-        phone: '',
-        email: '',
-        bank: '',
-        bankaccount: '',
       }
     },
 
@@ -208,7 +148,7 @@ export default {
         data,
         success,
         message
-      } = await addCompany(obj)
+      } = await addGoodsType(obj)
       if (success) {
         this.loadPageList()
         this.dialogFormVisible = false
@@ -226,7 +166,7 @@ export default {
         data,
         success,
         message
-      } = await editCompany(obj)
+      } = await editGoodsType(obj)
       if (success) {
         this.loadPageList()
       }
@@ -249,7 +189,7 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(async () => {
-          let del = await delCompany(data.id)
+          let del = await delGoodsType(data.id)
           this.list.splice(this.list.indexOf(data), 1)
           this.$message({
             type: 'success',

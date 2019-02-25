@@ -24,6 +24,13 @@ Vue.prototype.urlencode = function(str) {
   return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').
   replace(/\)/g, '%29').replace(/\*/g, '%2A').replace(/%20/g, '+');
 }
+Vue.prototype.deepCopy = function(src) {
+    var ret = {}
+    for (var k in src) {
+        ret[k] = typeof src[k] ==='object' ? Vue.prototype.deepCopy(src[k]) : src[k]
+    }
+    return ret
+}
 Vue.prototype.getformatTime = function() {
   var d = new Date(); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
   let year = d.getFullYear()
