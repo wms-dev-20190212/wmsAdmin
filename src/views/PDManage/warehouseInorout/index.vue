@@ -31,31 +31,25 @@
     </-table-column> -->
     <el-table-column align="center" label="货物管理类型">
       <template slot-scope="scope">
-        <span>{{ scope.row.type }}</span>
+        <span>{{ scope.row.inoroutType }}</span>
       </template>
     </el-table-column>
     <el-table-column align="center" label="单位">
       <template slot-scope="scope">
         <span>
-          {{ scope.row.company}}</span>
+          {{ scope.row.companyName}}</span>
       </template>
     </el-table-column>
     <el-table-column align="center" label="仓库">
       <template slot-scope="scope">
         <span>
-          {{ scope.row.warehouse}}</span>
+          {{ scope.row.warehouseName}}</span>
       </template>
     </el-table-column>
     <el-table-column align="center" label="负责人">
       <template slot-scope="scope">
         <span>
           {{ scope.row.userName}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column align="center" label="单位">
-      <template slot-scope="scope">
-        <span>
-          {{ scope.row.company}}</span>
       </template>
     </el-table-column>
     <el-table-column align="center" label="备注">
@@ -65,10 +59,10 @@
       </template>
     </el-table-column>
 
-    <el-table-column align="center" label="操作时间">
+    <el-table-column align="center" label="下单时间">
       <template slot-scope="scope">
         <span>
-          {{ scope.row.date}}</span>
+          {{ scope.row.orderDate | formatTime}}</span>
       </template>
     </el-table-column>
 
@@ -99,7 +93,7 @@
             </el-form-item>
 
             <el-form-item label="录单日期">
-              <el-date-picker v-model="obj.date" type="date" placeholder="选择录单时间">
+              <el-date-picker v-model="obj.orderDate" type="date" placeholder="选择录单时间">
               </el-date-picker>
             </el-form-item>
 
@@ -117,12 +111,11 @@
               </el-select>
             </el-form-item>
           </el-col>
+
           <el-col :span="12">
             <el-form-item label="货物管理类型">
               <el-select v-model="obj.type" style="width:150px" placeholder="请选择">
-                <el-option label="出库" :key=1 :value=1>
-                </el-option>
-                <el-option label="入库" :key=2 :value=2>
+                <el-option v-for="x in InoroutTypeList" :label=x.name :key=x.id :value=x.id>
                 </el-option>
               </el-select>
             </el-form-item>
@@ -288,6 +281,9 @@ import {
 import {
   getwarehouseAllList,
 } from '@/api/warehouse'
+import {
+  getInoroutTypeAllLists,
+} from '@/api/inoroutType'
 
 export default {
   mixins: [mixin], // 使用mixins
@@ -303,7 +299,7 @@ export default {
       },
       obj: {
         receipt: '',
-        date: '',
+        orderDate: '',
         warehouse: '',
         company: '',
         type: '',
@@ -316,6 +312,7 @@ export default {
       userList: [],
       companyList: [],
       warehouseList: [],
+      InoroutTypeList: [],
     }
   },
   created() {
@@ -434,6 +431,16 @@ export default {
         this.warehouseList = data.list
       }
     },
+    async loadInoroutTypeAllList() {
+      let {
+        data,
+        success,
+        message
+      } = await getInoroutTypeAllLists(this.listQuery)
+      if (success) {
+        this.InoroutTypeList = data.list
+      }
+    },
 
     async loadGoodsList() {
       if (this.input) {
@@ -463,7 +470,7 @@ export default {
       this.dialogsave = false
       this.obj = {
         receipt: '',
-        date: '',
+        orderDate: '',
         warehouse: '',
         company: '',
         type: '',
@@ -475,12 +482,13 @@ export default {
       this.loadUserAllList()
       this.loadCompanyAllLists()
       this.loadWarehouseAllList()
+      this.loadInoroutTypeAllList()
     },
 
 
     async addCreate(obj) {
       this.dialogFormVisible = false
-      obj.date= this.getformatTime(obj.date)
+      obj.orderDate = this.getformatTime(obj.orderDate)
       obj.itemstring = JSON.stringify(this.nowGoodsList)
       // if (!this.validata.validaManageUser(obj)) return
       let data = await addWarehouseInorout(obj)
@@ -497,30 +505,35 @@ export default {
 
     async saveCreate(obj) {
       this.dialogFormVisible = false
+      obj.orderDate = this.getformatTime(obj.orderDate)
+      obj.itemstring = JSON.stringify(this.nowGoodsList)
       // if (!this.validata.validaManageUser(obj)) return
-      // let data = await editWarehouseInorout(obj)
-      // if (data.code === 200) {
-      //   this.obj.productionDes = this.obj.newPassword
-      //   this.dialogFormVisible = false
-      // } else {
-      //   this.$message({
-      //     message: data.message,
-      //     type: 'success'
-      //   });
-      // }
+      let data = await editWarehouseInorout(obj)
+      if (data.code === 200) {
+        this.loadPageList()
+        this.dialogFormVisible = false
+      } else {
+        this.$message({
+          message: data.message,
+          type: 'success'
+        });
+      }
     },
 
     async handleEdit(data, type) {
       if (type === 'edit') {
+        this.nowGoodsList = JSON.parse(data.itemstring)
         this.obj = data
         this.dialogStatus = 'update'
         this.dialogsave = true
         this.dialogadd = false
         this.dialogFormVisible = true
+
         this.loadGoodsList()
         this.loadUserAllList()
         this.loadCompanyAllLists()
         this.loadWarehouseAllList()
+        this.loadInoroutTypeAllList()
       } else if (type === 'del') {
         this.$confirm('此操作将删除该记录, 是否继续?', '提示', {
           confirmButtonText: '确定',

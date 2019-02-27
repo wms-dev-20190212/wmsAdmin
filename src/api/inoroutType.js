@@ -5,6 +5,11 @@ export function getInoroutTypeLists(data) {
     url: '/api/inoroutTypeList?userId='+window.sessionStorage.getItem('userId'),
     method: 'get'
   });
+}export function getInoroutTypeAllLists(data) {
+  return request({
+    url: '/api/inoroutTypeAllList?userId='+window.sessionStorage.getItem('userId'),
+    method: 'get'
+  });
 }
 
 
