@@ -98,15 +98,23 @@
               <el-input v-model="obj.receipt" placeholder="请输入单据编号" style="width:80%"></el-input>
             </el-form-item>
 
-            <el-form-item label="录单时间">
-              <el-input v-model="obj.timestamp" placeholder="请输入录单时间" style="width:80%"></el-input>
+            <el-form-item label="录单日期">
+              <el-date-picker v-model="obj.date" type="date" placeholder="选择录单时间">
+              </el-date-picker>
             </el-form-item>
 
             <el-form-item label="出入仓库">
-              <el-input v-model="obj.warehouse" placeholder="请输入出入仓库" style="width:80%"></el-input>
+
+              <el-select v-model="obj.warehouse" style="width:150px" placeholder="请选择">
+                <el-option v-for="x in warehouseList" :label=x.name :key=x.id :value=x.id>
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="供应商/经销商">
-              <el-input v-model="obj.company" placeholder="请输入供应商/经销商" style="width:80%"></el-input>
+              <el-select v-model="obj.company" style="width:150px" placeholder="请选择">
+                <el-option v-for="x in companyList" :label=x.name :key=x.id :value=x.id>
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -119,7 +127,10 @@
               </el-select>
             </el-form-item>
             <el-form-item label="负责人">
-              <el-input v-model="obj.userName" placeholder="请输入负责人" style="width:80%"></el-input>
+              <el-select v-model="obj.yewuyuan" style="width:150px" placeholder="请选择">
+                <el-option v-for="x in userList" :label=x.userName :key=x.id :value=x.id>
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="备注">
               <el-input v-model="obj.remark" placeholder="请输入备注" style="width:80%"></el-input>
@@ -173,7 +184,7 @@
           <el-table-column align="center" label="">
             <template slot-scope="scope">
               <span>
-                <el-input type="number" v-model="scope.row.num" placeholder="数量"  style="width:80%"></el-input>
+                <el-input type="number" v-model="scope.row.num" placeholder="数量" style="width:80%"></el-input>
               </span>
             </template>
           </el-table-column>
@@ -181,7 +192,7 @@
           <el-table-column align="center" label="">
             <template slot-scope="scope">
               <span>
-                <el-input type="number" v-model="scope.row.price" placeholder="单价"  style="width:80%"></el-input>
+                <el-input type="number" v-model="scope.row.price" placeholder="单价" style="width:80%"></el-input>
               </span>
             </template>
           </el-table-column>
@@ -267,6 +278,17 @@ import {
   getGoodsList,
 } from '@/api/goods'
 
+import {
+  getUserAllList,
+} from '@/api/user'
+
+import {
+  getcompanyAllLists,
+} from '@/api/company'
+import {
+  getwarehouseAllList,
+} from '@/api/warehouse'
+
 export default {
   mixins: [mixin], // 使用mixins
   data() {
@@ -280,16 +302,20 @@ export default {
         status: '',
       },
       obj: {
-        productName: '',
-        production: '',
-        productType: '',
-        productionDes: '',
-        groupId: [],
-        operator: '',
-        operatorTime: '',
+        receipt: '',
+        date: '',
+        warehouse: '',
+        company: '',
+        type: '',
+        yewuyuan: '',
+        remark: '',
+        itemstring: '',
       },
       nowGoodsList: [],
-      goodsList: []
+      goodsList: [],
+      userList: [],
+      companyList: [],
+      warehouseList: [],
     }
   },
   created() {
@@ -377,6 +403,38 @@ export default {
         this.loading = false
       }
     },
+
+    async loadUserAllList() {
+      let {
+        data,
+        success,
+        message
+      } = await getUserAllList(this.listQuery)
+      if (success) {
+        this.userList = data.list
+      }
+    },
+    async loadCompanyAllLists() {
+      let {
+        data,
+        success,
+        message
+      } = await getcompanyAllLists(this.listQuery)
+      if (success) {
+        this.companyList = data.list
+      }
+    },
+    async loadWarehouseAllList() {
+      let {
+        data,
+        success,
+        message
+      } = await getwarehouseAllList(this.listQuery)
+      if (success) {
+        this.warehouseList = data.list
+      }
+    },
+
     async loadGoodsList() {
       if (this.input) {
         this.listQuery.objName = this.input.objName
@@ -404,22 +462,26 @@ export default {
       this.dialogadd = true
       this.dialogsave = false
       this.obj = {
-        productName: '',
-        production: '',
-        productType: '',
-        productionDes: "",
-        groupId: [],
-        operator: '',
-        operatorTime: '',
+        receipt: '',
+        date: '',
+        warehouse: '',
+        company: '',
+        type: '',
+        yewuyuan: '',
+        remark: '',
+        itemstring: '',
       }
       this.loadGoodsList()
+      this.loadUserAllList()
+      this.loadCompanyAllLists()
+      this.loadWarehouseAllList()
     },
 
 
     async addCreate(obj) {
       this.dialogFormVisible = false
-
-      this.list.push(this.obj)
+      obj.date= this.getformatTime(obj.date)
+      obj.itemstring = JSON.stringify(this.nowGoodsList)
       // if (!this.validata.validaManageUser(obj)) return
       let data = await addWarehouseInorout(obj)
       if (data.code === 200) {
@@ -456,6 +518,9 @@ export default {
         this.dialogadd = false
         this.dialogFormVisible = true
         this.loadGoodsList()
+        this.loadUserAllList()
+        this.loadCompanyAllLists()
+        this.loadWarehouseAllList()
       } else if (type === 'del') {
         this.$confirm('此操作将删除该记录, 是否继续?', '提示', {
           confirmButtonText: '确定',

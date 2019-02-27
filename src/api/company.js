@@ -1,12 +1,17 @@
 import request from '@/utils/request'
 
+export function getcompanyAllLists(data) {
+  return request({
+    url: '/api/companyAllList?userId='+window.sessionStorage.getItem('userId'),
+    method: 'get'
+  });
+}
 export function getcompanyLists(data) {
   return request({
     url: '/api/companyList?userId='+window.sessionStorage.getItem('userId'),
     method: 'get'
   });
 }
-
 export function addCompany(data) {
   return request({
     url: '/api/companyList',

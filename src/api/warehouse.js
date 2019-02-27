@@ -1,5 +1,12 @@
 import request from '@/utils/request'
 
+export function getwarehouseAllList(data) {
+  return request({
+    url: '/api/warehouseAllList?userId='+window.sessionStorage.getItem('userId'),
+    method: 'get'
+  });
+}
+
 export function getwarehouseList(data) {
   return request({
     url: '/api/warehouseList?userId='+window.sessionStorage.getItem('userId'),

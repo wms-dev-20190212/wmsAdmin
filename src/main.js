@@ -31,18 +31,41 @@ Vue.prototype.deepCopy = function(src) {
     }
     return ret
 }
-Vue.prototype.getformatTime = function() {
-  var d = new Date(); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
-  let year = d.getFullYear()
-  let month = parseInt(d.getMonth() + 1)
-  let date = d.getDate()
-  if (month < 10) {
-    month = '0' + month
-  }
-  if (date < 10) {
-    date = '0' + date
-  }
-  return year + '-' + month + '-' + date
+Vue.prototype.getformatTime = function(value) {
+  var time = new Date(value); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
+  return  format(time,"yyyy-MM-dd hh:mm:ss")
+}
+/**
+ * 时间对象的格式化;
+ */
+ function format(time,format) {
+    /*
+     * eg:format="yyyy-MM-dd hh:mm:ss";
+     */
+    var o = {
+        "M+" : time.getMonth() + 1, // month
+        "d+" : time.getDate(), // day
+        "h+" : time.getHours(), // hour
+        "m+" : time.getMinutes(), // minute
+        "s+" : time.getSeconds(), // second
+        "q+" : Math.floor((time.getMonth() + 3) / 3), // quarter
+        "S" : time.getMilliseconds()
+        // millisecond
+    }
+
+    if (/(y+)/.test(format)) {
+        format = format.replace(RegExp.$1, (time.getFullYear() + "").substr(4
+                        - RegExp.$1.length));
+    }
+
+    for (var k in o) {
+        if (new RegExp("(" + k + ")").test(format)) {
+            format = format.replace(RegExp.$1, RegExp.$1.length == 1
+                            ? o[k]
+                            : ("00" + o[k]).substr(("" + o[k]).length));
+        }
+    }
+    return format;
 }
 Vue.prototype.deepCopy = function(src) {
     var ret = {}
