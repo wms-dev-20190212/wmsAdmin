@@ -23,6 +23,13 @@ export function editGoods(data) {
     data
   });
 }
+export function setGoodsSize(data) {
+  return request({
+    url: '/api/goodsSize',
+    method: 'post',
+    data
+  });
+}
 
 
 export function delGoods(id) {

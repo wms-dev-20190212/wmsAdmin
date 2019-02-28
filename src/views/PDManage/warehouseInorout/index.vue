@@ -132,14 +132,14 @@
         </el-row>
 
       </div>
-      <div class="" style="border:1px solid#ccc;margin-top:30px;">
+      <div  v-show="dialogadd == true" class="" style="border:1px solid#ccc;margin-top:30px;">
         <h3 style="margin-left:30px;">添加货品</h3>
         <el-table v-loading="loading" class="tableH" :data="goodsList" border style="margin-top:20px;width:100%;font-size:12px;">
           <el-table-column type="index" width="50" align="center" label="ID">
           </el-table-column>
           <el-table-column align="center" label="货品图片">
             <template slot-scope="scope">
-              <img :src=scope.row.thumbUrl alt="">
+              <img :src=scope.row.thumbUrl alt=""  style="width:40px">
             </template>
           </el-table-column>
           <el-table-column align="center" label="货品名称">
@@ -206,7 +206,7 @@
           </el-table-column>
           <el-table-column align="center" label="货品图片">
             <template slot-scope="scope">
-              <img :src=scope.row.thumbUrl alt="">
+              <img :src=scope.row.thumbUrl alt="" style="width:40px">
             </template>
           </el-table-column>
           <el-table-column align="center" label="货品名称">
@@ -234,9 +234,9 @@
             </template>
           </el-table-column>
 
-          <el-table-column align="center" label="操作">
+          <el-table-column align="center" label="操作"  >
             <template slot-scope="scope">
-              <el-button size="small" @click="handleGoodsEdit(scope.row)" type="" class="el-icon-delete colorred borderred"></el-button>
+              <el-button size="small" :disabled="!dialogadd"    @click="handleGoodsEdit(scope.row)" type="" class="el-icon-delete colorred borderred"></el-button>
             </template>
           </el-table-column>
 
@@ -246,8 +246,8 @@
     </el-form>
 
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" v-if="dialogadd == true" @click="addCreate(obj)">添加</el-button>
-      <el-button type="primary" v-if="dialogsave == true" @click="saveCreate(obj)">修改</el-button>
+      <el-button type="primary" v-show="dialogadd == true" @click="addCreate(obj)">添加</el-button>
+      <el-button type="primary" v-show="dialogsave == true" @click="saveCreate(obj)">修改</el-button>
       <el-button type="primary" @click="dialogFormVisible = false">关闭</el-button>
     </span>
   </el-dialog>
@@ -269,6 +269,7 @@ import {
 
 import {
   getGoodsList,
+  setGoodsSize
 } from '@/api/goods'
 
 import {
@@ -351,15 +352,26 @@ export default {
         for (let x in list) {
           if (list[x].id == data.id) {
             list[x].num = parseInt(list[x].num) + parseInt(data.num)
+            list[x].size = parseInt(data.size)
+            debugger
             flag = false
             continue
           }
         }
         if (flag) {
+          if (this.nowGoodsList.length >= 3) {
+            this.$message({
+              message: '最大只可添加三种类型的产品！',
+              type: 'error',
+              duration: 5 * 1000
+            })
+            return
+          }
           this.nowGoodsList.push(data)
         }
 
       } else {
+        // data.size = parseInt(data.size) - parseInt(data.num)
         this.nowGoodsList.push(data)
       }
     },
@@ -478,6 +490,7 @@ export default {
         remark: '',
         itemstring: '',
       }
+      this.nowGoodsList = []
       this.loadGoodsList()
       this.loadUserAllList()
       this.loadCompanyAllLists()
@@ -493,7 +506,8 @@ export default {
       // if (!this.validata.validaManageUser(obj)) return
       let data = await addWarehouseInorout(obj)
       if (data.code === 200) {
-        this.loadPageList()
+        // await this.changeGoodsSize()
+        await this.loadPageList()
         this.dialogFormVisible = false
       } else {
         this.$message({
@@ -503,14 +517,34 @@ export default {
       }
     },
 
+    async changeGoodsSize() {
+      let obj = {
+        goodsList: this.nowGoodsList
+      }
+      let {
+        data,
+        success,
+        message
+      } = await setGoodsSize(obj)
+      if (success) {
+        this.$message({
+          message: message,
+          type: 'success'
+        });
+      }
+    },
     async saveCreate(obj) {
       this.dialogFormVisible = false
       obj.orderDate = this.getformatTime(obj.orderDate)
       obj.itemstring = JSON.stringify(this.nowGoodsList)
       // if (!this.validata.validaManageUser(obj)) return
-      let data = await editWarehouseInorout(obj)
-      if (data.code === 200) {
-        this.loadPageList()
+      let {
+        data,
+        success,
+        message
+      } = await editWarehouseInorout(obj)
+      if (success) {
+       this.loadPageList()
         this.dialogFormVisible = false
       } else {
         this.$message({
@@ -540,7 +574,7 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(async () => {
-          // let del = await delWarehouseInorout(data.id)
+          let del = await delWarehouseInorout(data.id)
           this.list.splice(this.list.indexOf(data), 1)
           this.$message({
             type: 'success',
