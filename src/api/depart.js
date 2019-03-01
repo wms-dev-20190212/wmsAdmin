@@ -1,5 +1,13 @@
 import request from '@/utils/request'
 
+export function getdepartAllList(data) {
+  return request({
+    url: '/api/departAllList?userId='+window.sessionStorage.getItem('userId'),
+    method: 'get'
+  });
+}
+
+
 export function getdepartList(data) {
   return request({
     url: '/api/departList?userId='+window.sessionStorage.getItem('userId'),

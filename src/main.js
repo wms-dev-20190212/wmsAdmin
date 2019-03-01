@@ -35,6 +35,10 @@ Vue.prototype.getformatTime = function(value) {
   var time = new Date(value); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
   return  format(time,"yyyy-MM-dd hh:mm:ss")
 }
+Vue.prototype.getNowTime = function() {
+  var time = new Date(); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
+  return  format(time,"yyyy-MM-dd hh:mm:ss")
+}
 /**
  * 时间对象的格式化;
  */

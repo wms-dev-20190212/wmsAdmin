@@ -260,31 +260,17 @@
 import qrPhoto from '@/assets/logo/qr.png'
 import mixin from '@/mixins/list' // 引入
 import {
-  getwarehouseInoroutList,
-  addWarehouseInorout,
-  editWarehouseInorout,
-  delWarehouseInorout
-} from '@/api/warehouseInorout'
+  getfbsList,
+  addfbs,
+  editfbs,
+  delfbs
+} from '@/api/fbs'
 
-
-import {
-  getGoodsList,
-  setGoodsSize
-} from '@/api/goods'
 
 import {
   getUserAllList,
 } from '@/api/user'
 
-import {
-  getcompanyAllLists,
-} from '@/api/company'
-import {
-  getwarehouseAllList,
-} from '@/api/warehouse'
-import {
-  getInoroutTypeAllLists,
-} from '@/api/inoroutType'
 
 export default {
   mixins: [mixin], // 使用mixins
@@ -405,7 +391,7 @@ export default {
       let {
         data,
         success
-      } = await getwarehouseInoroutList(this.listQuery)
+      } = await getfbsList(this.listQuery)
       if (success) {
         this.list = data.list
         // this.total = data.total
@@ -423,58 +409,8 @@ export default {
         this.userList = data.list
       }
     },
-    async loadCompanyAllLists() {
-      let {
-        data,
-        success,
-        message
-      } = await getcompanyAllLists(this.listQuery)
-      if (success) {
-        this.companyList = data.list
-      }
-    },
-    async loadWarehouseAllList() {
-      let {
-        data,
-        success,
-        message
-      } = await getwarehouseAllList(this.listQuery)
-      if (success) {
-        this.warehouseList = data.list
-      }
-    },
-    async loadInoroutTypeAllList() {
-      let {
-        data,
-        success,
-        message
-      } = await getInoroutTypeAllLists(this.listQuery)
-      if (success) {
-        this.InoroutTypeList = data.list
-      }
-    },
 
-    async loadGoodsList() {
-      if (this.input) {
-        this.listQuery.objName = this.input.objName
-      } else {
-        this.listQuery.objName = ''
-      }
-      let {
-        data,
-        success,
-        message
-      } = await getGoodsList(this.listQuery)
-      if (success) {
-        let goodsList = data.list
-        for (let x in goodsList) {
-          goodsList[x].thumbUrl = this.imgBaseUrl + goodsList[x].thumbUrl
-        }
-        this.goodsList = goodsList
-        // this.total = data.total
-        this.loading = false
-      }
-    },
+
     async handleCreate() {
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
@@ -491,11 +427,7 @@ export default {
         itemstring: '',
       }
       this.nowGoodsList = []
-      this.loadGoodsList()
       this.loadUserAllList()
-      this.loadCompanyAllLists()
-      this.loadWarehouseAllList()
-      this.loadInoroutTypeAllList()
     },
 
 
@@ -504,7 +436,7 @@ export default {
       obj.orderDate = this.getformatTime(obj.orderDate)
       obj.itemstring = JSON.stringify(this.nowGoodsList)
       // if (!this.validata.validaManageUser(obj)) return
-      let data = await addWarehouseInorout(obj)
+      let data = await addfbs(obj)
       if (data.code === 200) {
         await this.changeGoodsSize()
         await this.loadPageList()
@@ -543,7 +475,7 @@ export default {
         data,
         success,
         message
-      } = await editWarehouseInorout(obj)
+      } = await editfbs(obj)
       if (success) {
        this.loadPageList()
         this.dialogFormVisible = false
@@ -566,16 +498,13 @@ export default {
 
         // this.loadGoodsList()
         this.loadUserAllList()
-        this.loadCompanyAllLists()
-        this.loadWarehouseAllList()
-        this.loadInoroutTypeAllList()
       } else if (type === 'del') {
         this.$confirm('此操作将删除该记录, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(async () => {
-          let del = await delWarehouseInorout(data.id)
+          let del = await delfbs(data.id)
           this.list.splice(this.list.indexOf(data), 1)
           this.$message({
             type: 'success',

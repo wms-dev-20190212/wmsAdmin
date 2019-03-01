@@ -4,9 +4,9 @@
     <div class="paddingb textl paddingr">
 
 
-      <el-button   style="margin-left:20px" @click="loadPageList" type="primary" icon="el-icon-search"></el-button>
+      <el-button style="margin-left:20px" @click="loadPageList" type="primary" icon="el-icon-search"></el-button>
 
-      <el-button   style="margin-left: 10px;" @click="handleCreate" type="primary" icon="el-icon-circle-plus-outline">添加组织</el-button>
+      <el-button style="margin-left: 10px;" @click="handleCreate" type="primary" icon="el-icon-circle-plus-outline">添加部门</el-button>
 
     </div>
   </div>
@@ -14,7 +14,7 @@
   <tree-table :data="list" :evalFunc="func" :expandAll="expandAll" border style="text-align: center;">
     <!-- <el-table-column type="index" width="50" align="center" label="ID">
     </el-table-column> -->
-    <!-- <el-table-column align="center" label="组织名称">
+    <!-- <el-table-column align="center" label="部门名称">
       <template slot-scope="scope">
         <span :style="{'margin-left':(scope.row._level-1) * 40 + 'px'}">
 
@@ -25,18 +25,14 @@
     </el-table-column> -->
 
 
-    <!-- <el-table-column align="center" label="类型">
+    <el-table-column align="center" label="类型">
       <template slot-scope="scope">
-        <span v-if="scope.row.parentOrgId =='1'">
+        <span v-if="scope.row.dtype =='0'">
           管理员</span>
-        <span v-if="scope.row.parentOrgId =='2'">
-          施工人员</span>
-        <span v-if="scope.row.parentOrgId =='3'">
-          质检员 </span>
-        <span v-if="scope.row.parentOrgId =='4'">
-          派单人员</span>
+        <span v-if="scope.row.dtype =='1'">
+          普通客户</span>
       </template>
-    </el-table-column> -->
+    </el-table-column>
     <el-table-column align="center" label="描述">
       <template slot-scope="scope">
         <span>
@@ -52,7 +48,7 @@
         <button v-show="scope.row.leaf" type="" style="border:none;width:34px;margin: 0;visibility: hidden;"></button>
         <el-button size="small" @click="handleEdit(scope.row,'edit')" type="" class="el-icon-edit colorblue borderblue"></el-button>
         <el-button size="small" v-show="scope.row.parentOrgId != 0" @click="handleEdit(scope.row,'del')" type="" class="el-icon-delete colorred borderred" style="margin:0"></el-button>
-        <button  v-show="scope.row.parentOrgId == 0" type="" style="border:none;width:34px;margin: 0;visibility: hidden;"></button>
+        <button v-show="scope.row.parentOrgId == 0" type="" style="border:none;width:34px;margin: 0;visibility: hidden;"></button>
 
       </template>
     </el-table-column>
@@ -73,15 +69,23 @@
         <el-form-item label="部门名称">
           <el-input v-model="obj.name" placeholder="请输入部门名称" style="width:80%"></el-input>
         </el-form-item>
+        <el-form-item label="部门类型">
+          <el-select v-model="obj.dtype" style="width:150px" placeholder="请选择">
+            <el-option label='管理员' :key=0 :value=0>
+            </el-option>
+            <el-option label='普通客户' :key=1 :value=1>
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="描述">
           <el-input v-model="obj.des" placeholder="请输入描述" style="width:80%"></el-input>
         </el-form-item>
-        <el-form-item label="等级">
-          <el-input v-model="obj.major" placeholder="请输入等级" style="width:80%"></el-input>
-        </el-form-item>
-        <el-form-item label="手机号">
+        <!-- <el-form-item label="重要等级">
+          <el-input v-model="obj.major" placeholder="请输入重要等级" style="width:80%"></el-input>
+        </el-form-item> -->
+        <!-- <el-form-item label="手机号">
           <el-input v-model="obj.phone" placeholder="请输入手机号" style="width:80%"></el-input>
-        </el-form-item>
+        </el-form-item> -->
       </el-row>
 
 
@@ -105,7 +109,7 @@
 </template>
 
 <script>
- "use strict";
+"use strict";
 import mixin from '@/mixins/list' // 引入
 import {
   getdepartList,
@@ -119,7 +123,7 @@ import treeToArray from './customEval'
 
 
 export default {
-  inject:['reload'],
+  inject: ['reload'],
   mixins: [mixin], // 使用mixins
   components: {
     treeTable
@@ -137,8 +141,10 @@ export default {
         status: '',
       },
       obj: {
+        parent_id: 0,
         name: '',
         major: '',
+        dtype: 1,
         phone: '',
         des: '',
       },
@@ -199,7 +205,6 @@ export default {
         success
       } = await getdepartList(this.listQuery)
       if (success) {
-        debugger
         this.list = data.list
         // this.total = data.total
         this.loading = false
@@ -216,8 +221,10 @@ export default {
       this.dialogadd = true
       this.dialogsave = false
       this.obj = {
+        parent_id: obj.id || 0,
         name: '',
         major: '',
+        dtype: 1,
         phone: '',
         des: '',
       }
@@ -288,7 +295,6 @@ export default {
     },
 
     async addCreate(obj) {
-      obj.parent_id = 0
       // if (!this.validata.validaManageUser(obj)) return
       let {
         data,
@@ -319,6 +325,8 @@ export default {
 
     async handleEdit(data, type) {
       if (type === 'edit') {
+        delete data.children
+        delete data.parent
         this.obj = this.deepCopy(data)
         this.dialogStatus = 'update'
         this.dialogsave = true
@@ -340,7 +348,7 @@ export default {
           // this.list.splice(this.list.indexOf(data), 1)
 
           this.loadPageList()
-          if(!code){
+          if (!code) {
             this.$message({
               type: 'success',
               message: '删除成功!'

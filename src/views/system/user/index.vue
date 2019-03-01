@@ -12,7 +12,11 @@
   </div>
 
   <el-table v-loading="loading" class="tableH" :data="list" border style="margin-top:20px;width:100%;font-size:12px;">
-    <el-table-column type="index" width="50" align="center" label="ID">
+
+    <el-table-column align="center" label="客户代码">
+      <template slot-scope="scope">
+        <span>{{ scope.row.code }}</span>
+      </template>
     </el-table-column>
     <el-table-column align="center" label="用户名">
       <template slot-scope="scope">
@@ -21,7 +25,7 @@
     </el-table-column>
     <el-table-column align="center" label="部门">
       <template slot-scope="scope">
-        <span>{{ scope.row.depart }}</span>
+        <span>{{ scope.row.departName }}</span>
       </template>
     </el-table-column>
     <el-table-column align="center" label="手机号">
@@ -73,14 +77,24 @@
 
     <el-form class="" label-width="20%" style="text-align:left">
 
-      <el-row  :gutter="24">
+      <el-row :gutter="24">
+
+        <el-form-item label="客户代码">
+          <el-input v-model="obj.code" placeholder="请输入客户代码" style="width:80%"></el-input>
+        </el-form-item>
+        <el-form-item label="店铺名称">
+          <el-input v-model="obj.shopName" placeholder="请输入店铺名称" style="width:80%"></el-input>
+        </el-form-item>
         <el-form-item label="用户名">
           <el-input v-model="obj.userName" placeholder="请输入用户名" style="width:80%"></el-input>
         </el-form-item>
 
 
         <el-form-item label="部门">
-          <el-input v-model="obj.depart" placeholder="请输入部门" style="width:80%"></el-input>
+          <el-select v-model="obj.depart" style="width:150px" placeholder="请选择">
+            <el-option v-for="x in departData" :label=x.name :key=x.id :value=x.id>
+            </el-option>
+          </el-select>
         </el-form-item>
 
 
@@ -120,6 +134,9 @@ import {
 } from '@/api/user'
 
 
+import {
+  getdepartAllList,
+} from '@/api/depart'
 
 export default {
   mixins: [mixin], // 使用mixins
@@ -131,11 +148,14 @@ export default {
         status: '',
       },
       obj: {
+        code: '',
+        shopName: '',
         userName: '',
         iphoneNum: '',
         address: '',
         depart: '',
-      }
+      },
+      departData:[]
     }
   },
   created() {
@@ -194,18 +214,31 @@ export default {
       }
     },
 
+    async loaddepartAll() {
+      let {
+        data,
+        success,
+        message
+      } = await getdepartAllList()
+      if (success) {
+        this.departData = data.list
+
+      }
+    },
     async handleCreate() {
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.dialogadd = true
       this.dialogsave = false
-      this.obj =  {
+      this.obj = {
+        code: '',
+        shopName: '',
         userName: '',
         iphoneNum: '',
         address: '',
         depart: '',
       }
-      this.loadoptions()
+      this.loaddepartAll()
     },
 
 
@@ -215,14 +248,14 @@ export default {
       if (data.code === 200) {
         this.loadPageList()
         this.dialogFormVisible = false
-      } 
+      }
     },
 
     async saveCreate(obj) {
       // if (!this.validata.validaManageUser(obj)) return
       let data = await saveUser(obj)
       if (data.code === 200) {
-        this.obj.password = this.obj.newPassword
+        this.loadPageList()
         this.dialogFormVisible = false
       } else {
         this.$message({
@@ -240,6 +273,7 @@ export default {
         this.dialogsave = true
         this.dialogadd = false
         this.dialogFormVisible = true
+        this.loaddepartAll()
       } else if (type === 'del') {
         this.$confirm('此操作将删除该记录, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -259,7 +293,7 @@ export default {
             message: '已取消删除'
           });
         });
-      }else if (type === 'reset') {
+      } else if (type === 'reset') {
         this.$confirm('此操作将重置密码, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
