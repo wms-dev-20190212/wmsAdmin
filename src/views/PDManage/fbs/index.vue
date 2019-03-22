@@ -81,167 +81,39 @@
   </div>
 
 
-  <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="80%" top='2%'>
+  <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="50%" top='5%'>
 
     <el-form class="" label-width="20%" style="text-align:left;padding:0 10% ">
       <div class="" style="border:1px solid#ccc;">
         <h3 style="margin-left:30px;">单据信息</h3>
         <el-row :gutter="24">
           <el-col :span="12">
-            <el-form-item label="单据编号">
-              <el-input v-model="obj.receipt" placeholder="请输入单据编号" style="width:80%"></el-input>
+            <el-form-item label="FBS单号">
+              <el-input v-model="obj.receipt" placeholder="请输入FBS单号" style="width:80%"></el-input>
             </el-form-item>
 
             <el-form-item label="录单日期">
               <el-date-picker v-model="obj.orderDate" type="date" placeholder="选择录单时间">
               </el-date-picker>
             </el-form-item>
-
-            <el-form-item label="出入仓库">
-
-              <el-select v-model="obj.warehouse" style="width:150px" placeholder="请选择">
-                <el-option v-for="x in warehouseList" :label=x.name :key=x.id :value=x.id>
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="供应商/经销商">
-              <el-select v-model="obj.company" style="width:150px" placeholder="请选择">
-                <el-option v-for="x in companyList" :label=x.name :key=x.id :value=x.id>
-                </el-option>
-              </el-select>
-            </el-form-item>
           </el-col>
 
           <el-col :span="12">
-            <el-form-item label="货物管理类型">
-              <el-select v-model="obj.type" style="width:150px" placeholder="请选择">
-                <el-option v-for="x in InoroutTypeList" :label=x.name :key=x.id :value=x.id>
-                </el-option>
-              </el-select>
-            </el-form-item>
+
+          <el-form-item label="重量">
+              <el-input v-model="obj.weight" placeholder="请输入重量" style="width:80%"></el-input>
+          </el-form-item>
             <el-form-item label="负责人">
               <el-select v-model="obj.yewuyuan" style="width:150px" placeholder="请选择">
                 <el-option v-for="x in userList" :label=x.userName :key=x.id :value=x.id>
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="备注">
-              <el-input v-model="obj.remark" placeholder="请输入备注" style="width:80%"></el-input>
-            </el-form-item>
           </el-col>
         </el-row>
 
       </div>
-      <div  v-show="dialogadd == true" class="" style="border:1px solid#ccc;margin-top:30px;">
-        <h3 style="margin-left:30px;">添加货品</h3>
-        <el-table v-loading="loading" class="tableH" :data="goodsList" border style="margin-top:20px;width:100%;font-size:12px;">
-          <el-table-column type="index" width="50" align="center" label="ID">
-          </el-table-column>
-          <el-table-column align="center" label="货品图片">
-            <template slot-scope="scope">
-              <img :src=scope.row.thumbUrl alt=""  style="width:40px">
-            </template>
-          </el-table-column>
-          <el-table-column align="center" label="货品名称">
-            <template slot-scope="scope">
-              <span>{{ scope.row.name }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column align="center" label="分类">
-            <template slot-scope="scope">
-              <span>
-                {{ scope.row.goodsType}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column align="center" label="库存数量">
-            <template slot-scope="scope">
-              <span>
-                {{ scope.row.size}}</span>
-            </template>
-          </el-table-column>
 
-          <el-table-column align="center" label="入库参考价">
-            <template slot-scope="scope">
-              <span>
-                {{ scope.row.inprice}}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column align="center" label="出库参考价">
-            <template slot-scope="scope">
-              <span>
-                {{ scope.row.outprice}}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column align="center" label="">
-            <template slot-scope="scope">
-              <span>
-                <el-input type="number" v-model="scope.row.num" placeholder="数量" style="width:80%"></el-input>
-              </span>
-            </template>
-          </el-table-column>
-
-          <el-table-column align="center" label="">
-            <template slot-scope="scope">
-              <span>
-                <el-input type="number" v-model="scope.row.price" placeholder="单价" style="width:80%"></el-input>
-              </span>
-            </template>
-          </el-table-column>
-
-          <el-table-column align="center" label="添加">
-            <template slot-scope="scope">
-              <el-button size="small" @click="handleAdd(scope.row)" type="" class="el-icon-circle-plus" style="border:0px;font-size:20px;"></el-button>
-            </template>
-          </el-table-column>
-
-        </el-table>
-      </div>
-
-      <div class="" style="border:1px solid#ccc;margin-top:30px;">
-        <h3 style="margin-left:30px;">货品列表</h3>
-        <el-table v-loading="loading" class="tableH" :data="nowGoodsList" border style="margin-top:20px;width:100%;font-size:12px;">
-          <el-table-column type="index" width="50" align="center" label="ID">
-          </el-table-column>
-          <el-table-column align="center" label="货品图片">
-            <template slot-scope="scope">
-              <img :src=scope.row.thumbUrl alt="" style="width:40px">
-            </template>
-          </el-table-column>
-          <el-table-column align="center" label="货品名称">
-            <template slot-scope="scope">
-              <span>{{ scope.row.name }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column align="center" label="分类">
-            <template slot-scope="scope">
-              <span>
-                {{ scope.row.goodsType}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column align="center" label="数量">
-            <template slot-scope="scope">
-              <span>
-                {{ scope.row.num}}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column align="center" label="单价">
-            <template slot-scope="scope">
-              <span>
-                {{ scope.row.price}}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column align="center" label="操作"  >
-            <template slot-scope="scope">
-              <el-button size="small" :disabled="!dialogadd"    @click="handleGoodsEdit(scope.row)" type="" class="el-icon-delete colorred borderred"></el-button>
-            </template>
-          </el-table-column>
-
-        </el-table>
-      </div>
 
     </el-form>
 
@@ -288,11 +160,8 @@ export default {
         receipt: '',
         orderDate: this.getNowTime(),
         warehouse: '',
-        company: '',
-        type: '',
+        weight: '',
         yewuyuan: '',
-        remark: '',
-        itemstring: '',
       },
       nowGoodsList: [],
       goodsList: [],
@@ -420,11 +289,8 @@ export default {
         receipt: '',
         orderDate: this.getNowTime(),
         warehouse: '',
-        company: '',
-        type: '',
+        weight: '',
         yewuyuan: '',
-        remark: '',
-        itemstring: '',
       }
       this.nowGoodsList = []
       this.loadUserAllList()
@@ -434,7 +300,7 @@ export default {
     async addCreate(obj) {
       this.dialogFormVisible = false
       obj.orderDate = this.getformatTime(obj.orderDate)
-      obj.itemstring = JSON.stringify(this.nowGoodsList)
+      // obj.itemstring = JSON.stringify(this.nowGoodsList)
       // if (!this.validata.validaManageUser(obj)) return
       let data = await addfbs(obj)
       if (data.code === 200) {
@@ -449,27 +315,10 @@ export default {
       }
     },
 
-    async changeGoodsSize() {
-      debugger
-      let obj = {
-        goodsList: this.nowGoodsList
-      }
-      let {
-        data,
-        success,
-        message
-      } = await setGoodsSize(obj)
-      if (success) {
-        this.$message({
-          message: message,
-          type: 'success'
-        });
-      }
-    },
     async saveCreate(obj) {
       this.dialogFormVisible = false
       obj.orderDate = this.getformatTime(obj.orderDate)
-      obj.itemstring = JSON.stringify(this.nowGoodsList)
+      // obj.itemstring = JSON.stringify(this.nowGoodsList)
       // if (!this.validata.validaManageUser(obj)) return
       let {
         data,
