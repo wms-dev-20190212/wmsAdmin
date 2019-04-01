@@ -6,7 +6,7 @@
 
 
     <div class="right-content">
-      <h3 style="color:#FFF;text-align:center">PHC管桩管理系统</h3>
+      <h3 style="color:#FFF;text-align:center">wms管理系统</h3>
       <el-card class="box-card">
 
         <div slot="header" class="clearfix">

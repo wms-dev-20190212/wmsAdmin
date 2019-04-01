@@ -3,8 +3,8 @@
 
   <div class="navbar-header" style="display:flex">
     <div id="mainLogo" class="" style="flex:1;text-align:center;height:57px;padding: 5px;color:#fff">
-      <h1 v-show='!isCollapse' style="margin:0;line-height:50px;font-style: oblique;">P H C</h1>
-      <h1 v-show='isCollapse' style="margin:0;line-height:50px;font-style: oblique;">P</h1>
+      <h1 v-show='!isCollapse' style="margin:0;line-height:50px;font-style: oblique;">W M S</h1>
+      <h1 v-show='isCollapse' style="margin:0;line-height:50px;font-style: oblique;">W</h1>
     </div>
   </div>
   <el-menu mode="vertical" unique-opened :default-active="$route.path" :collapse="isCollapse" background-color="#252a2f" text-color="#fff" active-text-color="#000">

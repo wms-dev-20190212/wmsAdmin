@@ -28,13 +28,13 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/api': {
-        target: 'http://222.73.22.8:50200',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/api': '/api',
-        }
-      },
+      // '/api': {
+      //   target: 'http://222.73.22.8:50200',
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     '^/api': '/api',
+      //   }
+      // },
       '/beibei-test': {
         target: 'http://192.168.1.84:8080',
         changeOrigin: true,

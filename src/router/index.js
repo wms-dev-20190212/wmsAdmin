@@ -71,7 +71,7 @@ const login = r => require.ensure([], () => r(require('@/views/login/index')), '
 const page404 = r => require.ensure([], () => r(require("@/views/404.vue")), 'page404');
 
 // const dashboard = r => require.ensure([], () => r(require("@/views/dashboard/index")), 'dashboard');
-const system = r => require.ensure([], () => r(require("@/views/statistAnalysis/finishedGraph/index")), 'user');
+const system = r => require.ensure([], () => r(require("@/views/system/user/index")), 'user');
 
 
 
